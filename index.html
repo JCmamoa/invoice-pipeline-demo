@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Invoice Pipeline — Browser Demo</title>
+    <meta
+      name="description"
+      content="Browser-only invoice extraction demo: CNPJ, total and due date with strict validation."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">IP</span>
+        <div>
+          <h1>Invoice Pipeline</h1>
+          <p>Browser demo — strict extraction and validation</p>
+        </div>
+      </div>
+      <span class="privacy">Your PDF never leaves this browser</span>
+    </header>
+
+    <main class="layout">
+      <section class="column">
+        <article class="card">
+          <h2>1. Choose an invoice</h2>
+          <p class="muted">
+            Drop a text-based PDF, pick one of the samples, or paste the invoice
+            text. The extractor looks for the supplier, CNPJ, total and due date.
+          </p>
+
+          <label id="dropzone" class="dropzone" for="file-input">
+            <input id="file-input" type="file" accept="application/pdf" hidden />
+            <strong>Drop a PDF here</strong>
+            <span>or click to choose a file</span>
+          </label>
+
+          <p class="label">Bundled samples</p>
+          <div id="samples" class="samples">
+            <button class="btn btn-ghost" data-sample="acme_invoice.pdf">Valid invoice (BRL)</button>
+            <button class="btn btn-ghost" data-sample="globex_invoice.pdf">Valid invoice (USD)</button>
+            <button class="btn btn-ghost" data-sample="missing_due_date.pdf">Missing due date</button>
+            <button class="btn btn-ghost" data-sample="invalid_cnpj.pdf">Invalid CNPJ</button>
+          </div>
+
+          <details class="paste">
+            <summary>Paste invoice text instead</summary>
+            <textarea
+              id="text-input"
+              rows="8"
+              placeholder="Supplier: Acme Supplies Ltda&#10;CNPJ: 11.222.333/0001-81&#10;Due date: 2026-12-15&#10;Total: R$ 1,234.56"
+            ></textarea>
+            <button id="text-btn" class="btn btn-primary">Extract from text</button>
+          </details>
+
+          <p id="status" class="muted small"></p>
+        </article>
+
+        <article class="card">
+          <h2>What the full pipeline adds</h2>
+          <ul class="features">
+            <li><strong>Durable queue</strong> — Postgres <code>FOR UPDATE SKIP LOCKED</code></li>
+            <li><strong>Idempotency</strong> — SHA-256 of the file, never processed twice</li>
+            <li><strong>Audit trail</strong> — every status transition recorded</li>
+            <li><strong>Archive</strong> — original PDF preserved before extraction</li>
+            <li><strong>Retries</strong> — 10s/30s/60s backoff for transient errors</li>
+            <li><strong>Notifications</strong> — Slack/Teams webhook or mock feed</li>
+          </ul>
+          <p class="muted small">
+            This page runs the same extraction and validation rules in JavaScript,
+            with no backend. The repository ships the full Docker stack.
+          </p>
+        </article>
+      </section>
+
+      <section class="column">
+        <article class="card result-card">
+          <div id="result">
+            <div class="empty">
+              <strong>No invoice processed yet</strong>
+              <p class="muted">Pick a sample to see extraction and validation.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Phase 0 demo — no authentication, no data leaves the browser.</span>
+      <span>Built with pdf.js and plain JavaScript.</span>
+    </footer>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
